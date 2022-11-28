@@ -5,6 +5,8 @@ Part of Final Project, Ray Tracing.
 *****************************************************/
 #include <vector>
 #include <glm/glm.hpp>
+#include <OpenGL/gl3.h>
+#define GL_WRITE_FRAMEBUFFER
 
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
@@ -32,7 +34,7 @@ public:
     void Image::draw() {
         glBindTexture(GL_TEXTURE_2D, tbo);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height,
-                        0, GL_RGB, GL_FLOAT, &pixel[0][0]);
+                        0, GL_RGB, GL_FLOAT, &pixels[0][0]);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
         glFramebufferTexture2D(GL_READ_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,
                                 GL_TEXTURE_2D, tbo, 0);// attach texture and the read frame
