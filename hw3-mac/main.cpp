@@ -14,6 +14,7 @@
 #include <glm/glm.hpp>
 #include "Screenshot.h"
 #include "Scene.h"
+#include "Image.h"
 
 
 static const int width = 800;
