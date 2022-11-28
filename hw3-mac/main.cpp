@@ -21,6 +21,7 @@ static const int height = 600;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static Scene scene;
+static Image image(width, height);
 
 #include "hw3AutoScreenshots.h"
 
@@ -50,6 +51,9 @@ void initialize(void){
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
+
+    // Initialize Image
+    image.init();
 }
 
 void display(void){
@@ -67,6 +71,10 @@ void saveScreenShot(const char* filename = "test.png"){
     int currentheight = glutGet(GLUT_WINDOW_HEIGHT);
     Screenshot imag = Screenshot(currentwidth,currentheight);
     imag.save(filename);
+}
+
+void setPixelColors() {
+    // TODO: set pixel colors
 }
 
 void keyboard(unsigned char key, int x, int y){
@@ -99,6 +107,14 @@ void keyboard(unsigned char key, int x, int y){
             break;
         case ' ':
             hw3AutoScreenshots();
+            glutPostRedisplay();
+            break;
+        // FINAL PROJECT: keyboard trigger for "Image"
+        case 'i':
+            setPixelColors();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            image.draw();
+            glutSwapBuffers();
             glutPostRedisplay();
             break;
         default:
