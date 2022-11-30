@@ -36,6 +36,7 @@ void printHelp(){
       press 'A'/'Z' to zoom.
       press 'R' to reset camera.
       press 'L' to turn on/off the lighting.
+      press 'I' to turn on Ray Tracing.
     
       press Spacebar to generate images for hw3 submission.
     
@@ -75,7 +76,11 @@ void saveScreenShot(const char* filename = "test.png"){
 }
 
 void setPixelColors() {
-    // TODO: set pixel colors
+    std::vector<glm::vec3> pixels = image.pixels;
+    for (int i = 0; i < pixels.size(); i++) {
+        pixels[i] = glm::vec3(1.0f, 0.0f, 0.0f);
+    }
+    image.pixels = pixels;
 }
 
 void keyboard(unsigned char key, int x, int y){
