@@ -63,6 +63,7 @@ public:
             glm::vec3 norm = glm::vec3(normals[indices[i]], normals[indices[i+1]], normals[indices[i+2]]);
             t.P.push_back(pos);
             t.N.push_back(norm);
+            elements.push_back(t);
         }
     }
     

@@ -72,7 +72,7 @@ void RTScene::draw(void){
             // TODO: RAY TRACING: instead of calling "draw", dump all triangles into a list
             // (with position/normal transformed to the world coordinate)
             shader -> setUniforms();
-            ( cur -> models[i] ) -> geometry -> draw();
+            ( cur -> models[i] ) -> geometry -> elements;
         }
         
         // Continue the DFS: put all the child nodes of the current node in the stack
@@ -86,6 +86,12 @@ void RTScene::draw(void){
     // HW3: Your code will only be above this line.
     void buildTriangleSoup() {
         // TODO: Implement buildTriangleSoup()
+        // traverse over scene graph
+        
+
+        // apply proper model matrix to a common coordinate system (world or camera)
+
+        // assign proper material for each triangle
     }
     
 }
