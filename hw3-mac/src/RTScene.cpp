@@ -10,7 +10,7 @@ Scene.cpp contains the implementation of the draw command
 
 
 using namespace glm;
-void RTScene::draw(void){
+void RTScene::buildTriangleSoup(void){
     // Pre-draw sequence: assign uniforms that are the same for all Geometry::draw call.  These uniforms include the camera view, proj, and the lights.  These uniform do not include modelview and material parameters.
     camera -> computeMatrices();
     shader -> view = camera -> view;
@@ -68,11 +68,31 @@ void RTScene::draw(void){
             shader -> modelview = cur_VM * mTransform; // TODO: HW3: Without updating cur_VM, modelview would just be camera's view matrix.
             shader -> material  = ( cur -> models[i] ) -> material;
             
-            // The draw command
+            shader -> setUniforms();
+            
             // TODO: RAY TRACING: instead of calling "draw", dump all triangles into a list
             // (with position/normal transformed to the world coordinate)
-            shader -> setUniforms();
-            ( cur -> models[i] ) -> geometry -> elements;
+            std::vector<Triangle> triangles = ( cur -> models[i] ) -> geometry -> elements;
+
+            mat3 A;
+            A[0] = vec3(cur_VM[0][0], cur_VM[0][1], cur_VM[0][2]);
+            A[1] = vec3(cur_VM[1][0], cur_VM[1][1], cur_VM[1][2]);
+            A[2] = vec3(cur_VM[2][0], cur_VM[2][1], cur_VM[2][2]);
+
+            for (Triangle t : triangles) {
+                glm::vec4 p0 = glm::vec4(t.P[0], 0);
+                glm::vec4 p1 = glm::vec4(t.P[1], 0);
+                glm::vec4 p2 = glm::vec4(t.P[2], 0);
+                t.P[0] = p0 * cur_VM;
+                t.P[1] = p1 * cur_VM;
+                t.P[2] = p2 * cur_VM;
+
+                t.N[0] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[0]);
+                t.N[1] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[1]);
+                t.N[2] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[2]);
+
+                triangle_soup.push_back(t);
+            }
         }
         
         // Continue the DFS: put all the child nodes of the current node in the stack
@@ -83,17 +103,6 @@ void RTScene::draw(void){
         }
         
     } // End of DFS while loop.
-    // HW3: Your code will only be above this line.
-    void buildTriangleSoup() {
-        // TODO: Implement buildTriangleSoup()
-        // traverse over scene graph
-        
-
-        // apply proper model matrix to a common coordinate system (world or camera)
-
-        // assign proper material for each triangle
-    }
-    
 }
 
 
