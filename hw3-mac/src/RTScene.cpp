@@ -80,12 +80,12 @@ void RTScene::buildTriangleSoup(void){
             A[2] = vec3(cur_VM[2][0], cur_VM[2][1], cur_VM[2][2]);
 
             for (Triangle t : triangles) {
-                glm::vec4 p0 = glm::vec4(t.P[0], 0);
-                glm::vec4 p1 = glm::vec4(t.P[1], 0);
-                glm::vec4 p2 = glm::vec4(t.P[2], 0);
-                t.P[0] = p0 * cur_VM;
-                t.P[1] = p1 * cur_VM;
-                t.P[2] = p2 * cur_VM;
+                glm::vec4 p0 = glm::vec4(t.P[0], 1);
+                glm::vec4 p1 = glm::vec4(t.P[1], 1);
+                glm::vec4 p2 = glm::vec4(t.P[2], 1);
+                t.P[0] = p0 * mTransform;
+                t.P[1] = p1 * mTransform;
+                t.P[2] = p2 * mTransform;
 
                 t.N[0] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[0]);
                 t.N[1] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[1]);
