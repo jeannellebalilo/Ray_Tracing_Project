@@ -10,7 +10,7 @@ Geometry class modified for Ray Tracing project.
 class RTGeometry {
 public:
     int count;
-    std::vector<Triangle> elements;
+    std::vector<Triangle*> elements;
 
     virtual void init(){};
     virtual void init(const char* s){};
