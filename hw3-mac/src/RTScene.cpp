@@ -6,7 +6,7 @@ Scene.cpp contains the implementation of the draw command
 #include "RTObj.h"
 
 // The scene init definition 
-#include "Scene.inl"
+#include "RTScene.inl"
 
 
 using namespace glm;

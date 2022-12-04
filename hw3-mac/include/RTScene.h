@@ -16,7 +16,7 @@
 #include "Camera.h"
 #include "SurfaceShader.h"
 #include "Light.h"
-#include "Geometry.h"
+#include "RTGeometry.h"
 #include "Material.h"
 #include "Model.h"
 #include "Triangle.h"

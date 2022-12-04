@@ -1,16 +1,16 @@
 /**************************************************
 Scene.inl contains the definition of the scene graph
 *****************************************************/
-#include "Scene.h"
-#include "Cube.h"
-#include "Obj.h"
+#include "RTScene.h"
+#include "RTCube.h"
+#include "RTObj.h"
 
 using namespace glm;
-void Scene::init(void){
+void RTScene::init(void){
     // Create a geometry palette
-    geometry["cube"] = new Cube;
-    geometry["teapot"] = new Obj;
-    geometry["bunny"] = new Obj;
+    geometry["cube"] = new RTCube;
+    geometry["teapot"] = new RTObj;
+    geometry["bunny"] = new RTObj;
     geometry["cube"] -> init();
     geometry["teapot"] -> init("models/teapot.obj");
     geometry["bunny"] -> init("models/bunny.obj");
@@ -132,5 +132,3 @@ void Scene::init(void){
     glUseProgram(shader -> program);
     shader -> initUniforms();
 }
-
-

@@ -13,7 +13,7 @@
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include "Screenshot.h"
-#include "Scene.h"
+#include "RTScene.h"
 #include "Image.h"
 
 
@@ -21,7 +21,7 @@ static const int width = 800;
 static const int height = 600;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
-static Scene scene;
+static RTScene scene;
 static Image image(width, height);
 
 #include "hw3AutoScreenshots.h"
