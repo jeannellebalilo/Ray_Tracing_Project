@@ -51,22 +51,34 @@ Ray RayTracer::RayThruPixel(Camera cam, int i, int j, int width, int height){
 }
 
 Intersection RayTracer::Intersect(Ray ray, Triangle* triangle){
-    glm::mat4 triMat;
-    triMat[0] = glm::vec4(triangle->P[0], 1.0f);
-    triMat[1] = glm::vec4(triangle->P[1], 1.0f);
-    triMat[2] = glm::vec4(triangle->P[2], 1.0f);
-    triMat[3] = glm::vec4(-(ray.dir), 0.0f);
+    
+    glm::vec4 p0 = glm::vec4(triangle->P[0], 1.0f);
+    glm::vec4 p1 = glm::vec4(triangle->P[1], 1.0f);
+    glm::vec4 p2 = glm::vec4(triangle->P[2], 1.0f);
+    glm::vec3 n0 = glm::vec3(triangle->N[0]);
+    glm::vec3 n1 = glm::vec3(triangle->N[1]);
+    glm::vec3 n2 = glm::vec3(triangle->N[2]);
+    glm::vec4 d = glm::vec4(-ray.dir, 0.0f);
+    glm::mat4 mat = glm::mat4(p0,p1,p2,d);
+    glm::vec4 p = glm::vec4(ray.p0, 1.0f);
+    glm::vec4 lamba = glm::inverse(mat) * p;
+    float t = lamba.w;
+    glm::vec3 iPoint = lamba.x * p0 + lamba.y * p1 + lamba.z * p2;
+    glm::vec3 n = glm::normalize(lamba.x * n0 + lamba.y * n1 + lamba.z * n2);
+    Intersection inter = Intersection();
+    inter.P = iPoint;
+    inter.N = n;
+    inter.V = ray.dir;
+    inter.triangle = triangle;
+    inter.dist = t;
+    if(lamba.x < 0 || lamba.y < 0 || lamba.z < 0){   
+        inter.dist = INFINITY;
+    }
+    
 
-    glm::vec4 rayPos = glm::vec4(ray.p0, 1.0f);
-
-    // vector that represents lambdas, and t
-    glm::vec4 lamT = glm::inverse(triMat) * rayPos;
-
-    glm::vec3 q = ray.p0 + lamT[3] * ray.dir;
-    glm::vec3 n = glm::normalize((lamT[0] * triangle->N[0]) + (lamT[1] * triangle->N[1]) + (lamT[2] * triangle->N[2]));
-    float d = sqrt(pow((q[0] - ray.p0[0]), 2) + pow((q[1] - ray.p0[1]), 2) + pow((q[2] - ray.p0[2]), 2));
-
-    return Intersection(q, n, -(ray.dir), triangle, d);  
+    
+    return inter;
+    
 }
 
 Intersection RayTracer::Intersect(Ray ray, RTScene scene){
