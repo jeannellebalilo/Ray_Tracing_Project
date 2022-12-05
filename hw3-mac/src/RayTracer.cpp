@@ -18,7 +18,6 @@ that loads an obj file.
 #else
 #endif
 
-#include "Ray.h"
 #include "Triangle.h"
 #include "RayTracer.h"
 
@@ -31,7 +30,7 @@ void RayTracer::Raytrace(Camera cam, RTScene scene, Image &image){
      for (int i=0; i<w; i++){
          Ray ray = RayThruPixel( cam, i, j, w, h );
          Intersection hit = Intersect( ray, scene );
-         image.pixels[i] = FindColor( hit ); // <- not sure how far recursion depth should be yet
+         image.pixels[j*w + i] = FindColor( hit ); // <- not sure how far recursion depth should be yet
         }
      }
 }
@@ -125,6 +124,11 @@ glm::vec3 RayTracer::FindColor(Intersection hit){
         triangle
         d = distance to source of ray
     */
-
+   std::cout << "Drawing" << std::endl;
+   if(hit.dist!= INFINITY){
+    std::cout<< "Hit!" << std::endl;
+    return glm::vec3( -1.5f, -0.5f, 0.5f);
+   }
+   return glm::vec3( -0.0f, -1.0f, 0.0f);
 
 }

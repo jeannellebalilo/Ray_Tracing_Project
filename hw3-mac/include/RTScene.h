@@ -18,7 +18,7 @@
 #include "Light.h"
 #include "RTGeometry.h"
 #include "Material.h"
-#include "Model.h"
+#include "RTModel.h"
 #include "Triangle.h"
 
 #ifndef __RTSCENE_H__

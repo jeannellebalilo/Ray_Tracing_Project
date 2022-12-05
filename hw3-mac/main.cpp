@@ -15,6 +15,7 @@
 #include "Screenshot.h"
 #include "RTScene.h"
 #include "Image.h"
+#include "RayTracer.h"
 
 
 static const int width = 800;
@@ -23,6 +24,7 @@ static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static RTScene scene;
 static Image image(width, height);
+bool RT_mode = false;
 
 #include "hw3AutoScreenshots.h"
 
@@ -60,11 +62,13 @@ void initialize(void){
 
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    
-    scene.draw();
-    
+    image.draw();
     glutSwapBuffers();
-    glFlush();
+    if(RT_mode == true){
+        scene.buildTriangleSoup();
+        RayTracer::Raytrace(*scene.camera, scene, image);
+    }
+    //glFlush();
     
 }
 
@@ -115,13 +119,11 @@ void keyboard(unsigned char key, int x, int y){
             hw3AutoScreenshots();
             glutPostRedisplay();
             break;
-        // FINAL PROJECT: keyboard trigger for "Image"
         case 'i':
-            setPixelColors();
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            image.draw();
-            glutSwapBuffers();
-            glutPostRedisplay();
+            RT_mode = !RT_mode;
+            display();
+            
+            //glutPostRedisplay();
             break;
         default:
             glutPostRedisplay();

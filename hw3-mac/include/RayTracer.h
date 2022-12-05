@@ -1,6 +1,7 @@
 #include "Ray.h"
 #include "Intersection.h"
 
+
 namespace RayTracer{
     void Raytrace(Camera cam, RTScene scene, Image &image); //page 9
     Ray RayThruPixel(Camera cam, int i, int j, int width, int height);//page 10,18

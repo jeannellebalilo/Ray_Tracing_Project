@@ -4,6 +4,8 @@ that represents a 3D cube.
 *****************************************************/
 #include <glm/gtc/type_ptr.hpp>
 #include "RTGeometry.h"
+#include <stdlib.h>
+#include <iostream>
 #ifndef __RTCUBE_H__
 #define __RTCUBE_H__
 
@@ -57,16 +59,19 @@ public:
         // from vertices and normals. Those triplets of vertex positions and normals allow
         // you to build a triangle (by calling constructor of Triangle class) and then
         // you can push_back to your std::vector<Triangle> triangle soup.
-
-        for (int i = 0; i < sizeof(indices); i+=3) {
+        for (int i = 0; i < 36; i+=3) {
             Triangle t = Triangle();
-            t.P.push_back(glm::make_vec3(positions[indices[i]]));
-            t.P.push_back(glm::make_vec3(positions[indices[i+1]]));
-            t.P.push_back(glm::make_vec3(positions[indices[i+2]]));
+            int a = indices[i];
+            int b = indices[i+1];
+            int c = indices[i+2];
+           
+            t.P.push_back(glm::make_vec3(positions[a]));
+            t.P.push_back(glm::make_vec3(positions[b]));
+            t.P.push_back(glm::make_vec3(positions[c]));
 
-            t.N.push_back(glm::make_vec3(normals[indices[i]]));
-            t.N.push_back(glm::make_vec3(normals[indices[i+1]]));
-            t.N.push_back(glm::make_vec3(normals[indices[i+2]]));
+            t.N.push_back(glm::make_vec3(normals[a]));
+            t.N.push_back(glm::make_vec3(normals[b]));
+            t.N.push_back(glm::make_vec3(normals[c]));
             elements.push_back(&t);
         }
     }
