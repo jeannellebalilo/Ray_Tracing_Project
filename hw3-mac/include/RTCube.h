@@ -2,6 +2,7 @@
 Cube is subclass class of Geometry
 that represents a 3D cube.
 *****************************************************/
+#include <glm/gtc/type_ptr.hpp>
 #include "RTGeometry.h"
 #ifndef __RTCUBE_H__
 #define __RTCUBE_H__
@@ -11,7 +12,7 @@ public:
 
     void init(void){
         // vertex positions
-        const GLfloat positions[24][3] ={
+        float positions[24][3] ={
             // Front face
             { -0.5f, -0.5f, 0.5f },{ -0.5f, 0.5f, 0.5f },{ 0.5f, 0.5f, 0.5f },{ 0.5f, -0.5f, 0.5f },
             // Back face
@@ -26,7 +27,7 @@ public:
             { 0.5f, -0.5f, 0.5f },{ -0.5f, -0.5f, 0.5f },{ -0.5f, -0.5f, -0.5f },{ 0.5f, -0.5f, -0.5f }
         };
         // vertex normals
-        const GLfloat normals[24][3] = {
+        float normals[24][3] = {
             // Front face
             { 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f, 1.0f },
             // Back face
@@ -41,7 +42,7 @@ public:
             { 0.0f, -1.0f, 0.0f },{ 0.0f, -1.0f, 0.0f },{ 0.0f, -1.0f, 0.0f },{ 0.0f, -1.0f, 0.0f }
         };
         // Cube indices
-        const GLuint indices[36] = {
+        int indices[36] = {
             0, 1, 2, 0, 2, 3, // Front face
             4, 5, 6, 4, 6, 7, // Back face
             8, 9, 10, 8, 10, 11, // Left face
@@ -59,11 +60,14 @@ public:
 
         for (int i = 0; i < sizeof(indices); i+=3) {
             Triangle t = Triangle();
-            glm::vec3 pos = glm::vec3(positions[indices[i]], positions[indices[i+1]], positions[indices[i+2]]);
-            glm::vec3 norm = glm::vec3(normals[indices[i]], normals[indices[i+1]], normals[indices[i+2]]);
-            t.P.push_back(pos);
-            t.N.push_back(norm);
-            elements.push_back(t);
+            t.P.push_back(glm::make_vec3(positions[indices[i]]));
+            t.P.push_back(glm::make_vec3(positions[indices[i+1]]));
+            t.P.push_back(glm::make_vec3(positions[indices[i+2]]));
+
+            t.N.push_back(glm::make_vec3(normals[indices[i]]));
+            t.N.push_back(glm::make_vec3(normals[indices[i+1]]));
+            t.N.push_back(glm::make_vec3(normals[indices[i+2]]));
+            elements.push_back(&t);
         }
     }
     

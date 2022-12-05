@@ -81,6 +81,27 @@ Intersection RayTracer::Intersect(Ray ray, Triangle* triangle){
     
 }
 
+/* just in case
+Intersection RayTracer::Intersect(Ray ray, Triangle* triangle){
+    glm::mat4 triMat;
+    triMat[0] = glm::vec4(triangle->P[0], 1.0f);
+    triMat[1] = glm::vec4(triangle->P[1], 1.0f);
+    triMat[2] = glm::vec4(triangle->P[2], 1.0f);
+    triMat[3] = glm::vec4(-(ray.dir), 0.0f);
+
+    glm::vec4 rayPos = glm::vec4(ray.p0, 1.0f);
+
+    // vector that represents lambdas, and t
+    glm::vec4 lamT = glm::inverse(triMat) * rayPos;
+
+    glm::vec3 q = ray.p0 + lamT[3] * ray.dir;
+    glm::vec3 n = glm::normalize((lamT[0] * triangle->N[0]) + (lamT[1] * triangle->N[1]) + (lamT[2] * triangle->N[2]));
+    float d = lamT[3];
+
+    return Intersection(q, n, -(ray.dir), triangle, d);  
+}
+*/
+
 Intersection RayTracer::Intersect(Ray ray, RTScene scene){
     float mindist = INFINITY;
     Intersection hit;
