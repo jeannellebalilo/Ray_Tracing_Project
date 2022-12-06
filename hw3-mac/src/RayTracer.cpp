@@ -17,7 +17,7 @@ that loads an obj file.
 #include <GLUT/glut.h>
 #else
 #endif
-
+#include "Material.h"
 #include "Triangle.h"
 #include "RayTracer.h"
 
@@ -32,7 +32,7 @@ void RayTracer::Raytrace(Camera cam, RTScene &scene, Image &image){
          Ray ray = RayThruPixel( cam, i, j, w, h );
          Intersection hit = Intersect( ray, scene );
          std::cout<<" hit value t: " << hit.dist << std::endl<< std::endl<< std::endl;
-         image.pixels[j*w + i] = FindColor( hit ); // <- not sure how far recursion depth should be yet
+         image.pixels[j*w + i] = FindColor( hit, scene, 4 ); // <- not sure how far recursion depth should be yet
         }
      }
      std::cout<< "Render Finished" << std::endl;
@@ -98,7 +98,7 @@ Intersection RayTracer::Intersect(Ray ray, RTScene &scene){
 }
 
 // Shade the light color seen by the in-coming ray
-glm::vec3 RayTracer::FindColor(Intersection hit){
+glm::vec3 RayTracer::FindColor(Intersection hit, RTScene &scene, int recursion_depth){
     /* 
         Intersection variables:
         P = position of intersection
@@ -108,12 +108,33 @@ glm::vec3 RayTracer::FindColor(Intersection hit){
         d = distance to source of ray
     */
    //std::cout << "Drawing, Distance: " << hit.dist << std::endl;
-   if(hit.dist == INFINITY){
-    //std::cout<< "Hit!" << std::endl;
-        return glm::vec3( 0.0f, 0.0f, 0.0f);
-   }
-   //std::cout << "Drawing, Distance: " << hit.dist << std::endl;
-   
-   return glm::vec3( 2.5f, 2.5f, 2.5f);
+    Material* m = hit.triangle->material;
+    glm::vec3 fragColor = m->emision;
+      if(hit.dist>=INFINITY){
+        return glm::vec3(1.0f, 1.0f, 1.0f);
+    }
+    for(auto const& [key, light] : scene.light){
+        if(recursion_depth>0){
+            Ray reflectedRay = Ray();
+            reflectedRay.dir = ((2 * (glm::dot(hit.N,hit.V) ) * hit.N - hit.V));
+            reflectedRay.p0 = hit.P;
+            Intersection rHit = Intersect(reflectedRay, scene);
+            fragColor+= FindColor(rHit, scene, recursion_depth - 1);
+        }
+        Ray ray = Ray();
+        ray.p0 = hit.P;
+        glm::vec3 dir = (hit.P - glm::vec3(light->position)/light->position.w);
+        ray.dir = dir;
+        Intersection intr = Intersect(ray, scene);
+        if(intr.dist >= INFINITY){
+            fragColor += glm::vec3(m->ambient)/m->ambient.w;
+            fragColor += glm::vec3(m->diffuse)/m->diffuse.w;
+        }
+        else{
+             return glm::vec3(1.0f, 1.0f, 1.0f);
+        }
+    }
+
+    return fragColor;
 
 }
