@@ -72,8 +72,10 @@ public:
             t.N.push_back(glm::make_vec3(normals[a]));
             t.N.push_back(glm::make_vec3(normals[b]));
             t.N.push_back(glm::make_vec3(normals[c]));
-            elements.push_back(&t);
+
+            elements.push_back(t);
         }
+        std::cout << elements.size() << " triangles in RTCube\n";
     }
     
     

@@ -42,7 +42,7 @@ public:
     std::map< std::string, Material* > material;
     std::map< std::string, Model* > model;
     std::map< std::string, Light* > light;
-    std::vector<Triangle*> triangle_soup;
+    std::vector<Triangle> triangle_soup;
     
     // The container of nodes will be the scene graph after we connect the nodes by setting the child_nodes.
     std::map< std::string, Node* > node;

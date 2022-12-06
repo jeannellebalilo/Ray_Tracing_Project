@@ -49,14 +49,14 @@ Ray RayTracer::RayThruPixel(Camera cam, int i, int j, int width, int height){
     return ray;
 }
 
-Intersection RayTracer::Intersect(Ray ray, Triangle* triangle){
+Intersection RayTracer::Intersect(Ray ray, Triangle triangle){
     
-    glm::vec4 p0 = glm::vec4(triangle->P[0], 1.0f);
-    glm::vec4 p1 = glm::vec4(triangle->P[1], 1.0f);
-    glm::vec4 p2 = glm::vec4(triangle->P[2], 1.0f);
-    glm::vec3 n0 = glm::vec3(triangle->N[0]);
-    glm::vec3 n1 = glm::vec3(triangle->N[1]);
-    glm::vec3 n2 = glm::vec3(triangle->N[2]);
+    glm::vec4 p0 = glm::vec4(triangle.P[0], 1.0f);
+    glm::vec4 p1 = glm::vec4(triangle.P[1], 1.0f);
+    glm::vec4 p2 = glm::vec4(triangle.P[2], 1.0f);
+    glm::vec3 n0 = glm::vec3(triangle.N[0]);
+    glm::vec3 n1 = glm::vec3(triangle.N[1]);
+    glm::vec3 n2 = glm::vec3(triangle.N[2]);
     glm::vec4 d = glm::vec4(-ray.dir, 0.0f);
     glm::mat4 mat = glm::mat4(p0,p1,p2,d);
     glm::vec4 p = glm::vec4(ray.p0, 1.0f);
@@ -68,7 +68,7 @@ Intersection RayTracer::Intersect(Ray ray, Triangle* triangle){
     inter.P = iPoint;
     inter.N = n;
     inter.V = ray.dir;
-    inter.triangle = triangle;
+    inter.triangle = &triangle;
     inter.dist = t;
     if(lamba.x < 0 || lamba.y < 0 || lamba.z < 0){   
         inter.dist = INFINITY;
@@ -104,7 +104,7 @@ Intersection RayTracer::Intersect(Ray ray, Triangle* triangle){
 Intersection RayTracer::Intersect(Ray ray, RTScene scene){
     float mindist = INFINITY;
     Intersection hit;
-    for (Triangle* t : scene.triangle_soup){ // Find closest intersection; test all objects
+    for (Triangle t : scene.triangle_soup){ // Find closest intersection; test all objects
         Intersection hit_temp = Intersect(ray, t);
         if (hit_temp.dist < mindist){ // closer than previous hit
             mindist = hit_temp.dist;

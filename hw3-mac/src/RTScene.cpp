@@ -72,31 +72,35 @@ void RTScene::buildTriangleSoup(void){
             
             // TODO: RAY TRACING: instead of calling "draw", dump all triangles into a list
             // (with position/normal transformed to the world coordinate)
-            std::vector<Triangle*> triangles = ( cur -> models[i] ) -> geometry -> elements;
+            std::vector<Triangle> triangles = ( cur -> models[i] ) -> geometry -> elements;
+            std::cout << triangles.size() << " size of triangles\n";
 
             mat3 A;
             A[0] = vec3(cur_VM[0][0], cur_VM[0][1], cur_VM[0][2]);
             A[1] = vec3(cur_VM[1][0], cur_VM[1][1], cur_VM[1][2]);
             A[2] = vec3(cur_VM[2][0], cur_VM[2][1], cur_VM[2][2]);
 
-            for (Triangle* t : triangles) {
-                glm::vec3 p00 = t->P[0];
-                glm::vec3 p11 = t->P[1];
-                glm::vec3 p22 = t->P[2];
+            for (Triangle t : triangles) {
+                // problem is between here
+                glm::vec3 p00 = t.P[0];
+                glm::vec3 p11 = t.P[1];
+                glm::vec3 p22 = t.P[2];
+                // and here
                 glm::vec4 p0 = glm::vec4(p00, 1);
                 glm::vec4 p1 = glm::vec4(p11, 1);
                 glm::vec4 p2 = glm::vec4(p22, 1);
-                t->P[0] = p0 * mTransform;
-                t->P[1] = p1 * mTransform;
-                t->P[2] = p2 * mTransform;
+                t.P[0] = p0 * mTransform;
+                t.P[1] = p1 * mTransform;
+                t.P[2] = p2 * mTransform;
 
-                t->N[0] = glm::normalize(glm::inverse(glm::transpose(A)) * t->N[0]);
-                t->N[1] = glm::normalize(glm::inverse(glm::transpose(A)) * t->N[1]);
-                t->N[2] = glm::normalize(glm::inverse(glm::transpose(A)) * t->N[2]);
+                t.N[0] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[0]);
+                t.N[1] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[1]);
+                t.N[2] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[2]);
 
                 triangle_soup.push_back(t);
             }
 
+            std::cout << triangle_soup.size() << " triangles in triangle_soup\n";
 
         }
         

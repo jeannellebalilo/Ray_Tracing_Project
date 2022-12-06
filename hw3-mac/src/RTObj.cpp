@@ -23,6 +23,8 @@ that loads an obj file.
 #include "RTObj.h"
 #include "Triangle.h"
 
+#include "glm/gtx/string_cast.hpp"
+
 void RTObj::init(const char * filename){
     std::vector< glm::vec3 > temp_vertices, vertices;
     std::vector< glm::vec3 > temp_normals, normals;
@@ -80,23 +82,20 @@ void RTObj::init(const char * filename){
     std::cout << "done." << std::endl;
     
     // setting up buffers
-    std::cout << "Setting up triangles...";
-    for (int i = 0; i < sizeof(indices); i+=3) {
+    std::cout << "Setting up triangles...\n";
+    for (int i = 0; i < indices.size(); i+=3) {
             Triangle t = Triangle();
-            std::vector<glm::vec3> pos;
-            pos.push_back(vertices[indices[i]]);
-            pos.push_back(vertices[indices[i+1]]);
-            pos.push_back(vertices[indices[i+2]]);
+            t.P.push_back(vertices[indices[i]]);
+            t.P.push_back(vertices[indices[i+1]]);
+            t.P.push_back(vertices[indices[i+2]]);
 
-            std::vector<glm::vec3> norm;
-            norm.push_back(normals[indices[i]]);
-            norm.push_back(normals[indices[i+1]]);
-            norm.push_back(normals[indices[i+2]]);
-
-            t.P = pos;
-            t.N = norm;
-            elements.push_back(&t);
+            t.N.push_back(normals[indices[i]]);
+            t.N.push_back(normals[indices[i+1]]);
+            t.N.push_back(normals[indices[i+2]]);
+            
+            elements.push_back(t);
     }
+    std::cout << elements.size() << " triangles in RTObj\n";
 }
 
 
