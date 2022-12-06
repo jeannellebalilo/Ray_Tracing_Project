@@ -23,7 +23,7 @@ that loads an obj file.
 
 using namespace RayTracer;
 
-void RayTracer::Raytrace(Camera cam, RTScene scene, Image &image){
+void RayTracer::Raytrace(Camera cam, RTScene &scene, Image &image){
     int w = image.width;
     int h = image.height;
     for (int j=0; j<h; j++){
@@ -101,7 +101,7 @@ Intersection RayTracer::Intersect(Ray ray, Triangle* triangle){
 }
 */
 
-Intersection RayTracer::Intersect(Ray ray, RTScene scene){
+Intersection RayTracer::Intersect(Ray ray, RTScene &scene){
     float mindist = INFINITY;
     Intersection hit;
     for (Triangle t : scene.triangle_soup){ // Find closest intersection; test all objects
