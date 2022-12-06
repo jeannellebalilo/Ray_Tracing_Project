@@ -28,11 +28,14 @@ void RayTracer::Raytrace(Camera cam, RTScene &scene, Image &image){
     int h = image.height;
     for (int j=0; j<h; j++){
      for (int i=0; i<w; i++){
+         std::cout<<"Traycing j: " << j << " i: " << i;
          Ray ray = RayThruPixel( cam, i, j, w, h );
          Intersection hit = Intersect( ray, scene );
+         std::cout<<" hit value t: " << hit.dist << std::endl<< std::endl<< std::endl;
          image.pixels[j*w + i] = FindColor( hit ); // <- not sure how far recursion depth should be yet
         }
      }
+     std::cout<< "Render Finished" << std::endl;
 }
 
 Ray RayTracer::RayThruPixel(Camera cam, int i, int j, int width, int height){
@@ -64,46 +67,25 @@ Intersection RayTracer::Intersect(Ray ray, Triangle triangle){
     float t = lamba.w;
     glm::vec3 iPoint = lamba.x * p0 + lamba.y * p1 + lamba.z * p2;
     glm::vec3 n = glm::normalize(lamba.x * n0 + lamba.y * n1 + lamba.z * n2);
-    Intersection inter = Intersection();
-    inter.P = iPoint;
-    inter.N = n;
-    inter.V = ray.dir;
-    inter.triangle = &triangle;
-    inter.dist = t;
-    if(lamba.x < 0 || lamba.y < 0 || lamba.z < 0){   
-        inter.dist = INFINITY;
+    Intersection i0 = Intersection(iPoint, n, ray.dir, &triangle, INFINITY);
+   
+    if(lamba.x > 0 && lamba.y > 0 && lamba.z > 0 && t>0){
+        Intersection inter = Intersection(iPoint, n, ray.dir, &triangle, t);
+        std::cout<< std::endl<<"Found hit:"<< t << std::endl;   
+        return inter;
     }
     
+    //std::cout<< std::endl<<"Found not hit:"<< t << std::endl;   
 
     
-    return inter;
+    return i0;
     
 }
-
-/* just in case
-Intersection RayTracer::Intersect(Ray ray, Triangle* triangle){
-    glm::mat4 triMat;
-    triMat[0] = glm::vec4(triangle->P[0], 1.0f);
-    triMat[1] = glm::vec4(triangle->P[1], 1.0f);
-    triMat[2] = glm::vec4(triangle->P[2], 1.0f);
-    triMat[3] = glm::vec4(-(ray.dir), 0.0f);
-
-    glm::vec4 rayPos = glm::vec4(ray.p0, 1.0f);
-
-    // vector that represents lambdas, and t
-    glm::vec4 lamT = glm::inverse(triMat) * rayPos;
-
-    glm::vec3 q = ray.p0 + lamT[3] * ray.dir;
-    glm::vec3 n = glm::normalize((lamT[0] * triangle->N[0]) + (lamT[1] * triangle->N[1]) + (lamT[2] * triangle->N[2]));
-    float d = lamT[3];
-
-    return Intersection(q, n, -(ray.dir), triangle, d);  
-}
-*/
 
 Intersection RayTracer::Intersect(Ray ray, RTScene &scene){
     float mindist = INFINITY;
     Intersection hit;
+    hit.dist = INFINITY;
     for (Triangle t : scene.triangle_soup){ // Find closest intersection; test all objects
         Intersection hit_temp = Intersect(ray, t);
         if (hit_temp.dist < mindist){ // closer than previous hit
@@ -111,6 +93,7 @@ Intersection RayTracer::Intersect(Ray ray, RTScene &scene){
             hit = hit_temp;
         }
     }
+    mindist = INFINITY;
     return hit;
 }
 
@@ -124,11 +107,13 @@ glm::vec3 RayTracer::FindColor(Intersection hit){
         triangle
         d = distance to source of ray
     */
-   std::cout << "Drawing" << std::endl;
-   if(hit.dist!= INFINITY){
-    std::cout<< "Hit!" << std::endl;
-    return glm::vec3( -1.5f, -0.5f, 0.5f);
+   //std::cout << "Drawing, Distance: " << hit.dist << std::endl;
+   if(hit.dist == INFINITY){
+    //std::cout<< "Hit!" << std::endl;
+        return glm::vec3( 0.0f, 0.0f, 0.0f);
    }
-   return glm::vec3( -0.0f, -1.0f, 0.0f);
+   //std::cout << "Drawing, Distance: " << hit.dist << std::endl;
+   
+   return glm::vec3( 2.5f, 2.5f, 2.5f);
 
 }

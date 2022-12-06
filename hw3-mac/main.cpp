@@ -18,8 +18,8 @@
 #include "RayTracer.h"
 
 
-static const int width = 800;
-static const int height = 600;
+static const int width = 250;
+static const int height = 180;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static RTScene scene;
@@ -62,13 +62,14 @@ void initialize(void){
 
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    image.draw();
     if(RT_mode == true){
         scene.buildTriangleSoup();
         RayTracer::Raytrace(*scene.camera, scene, image);
     }
+    image.draw();
+    
     glutSwapBuffers();
-    glFlush();
+    //glFlush();
 }
 
 void saveScreenShot(const char* filename = "test.png"){

@@ -28,10 +28,14 @@ void RTScene::buildTriangleSoup(void){
     // Define stacks for depth-first search (DFS)
     std::stack < Node* > dfs_stack;
     std::stack < mat4 >  matrix_stack; // HW3: You will update this matrix_stack during the depth-first search while loop.
-    
     // Initialize the current state variable for DFS
     Node* cur = node["world"]; // root of the tree
-    mat4 cur_VM = camera -> view; // HW3: You will update this current modelview during the depth first search.  Initially, we are at the "world" node, whose modelview matrix is just camera's view matrix.
+    mat4 cur_VM = glm::mat4();
+    cur_VM[0] = vec4(1, 0 ,0 ,0);
+    cur_VM[1] = vec4(0, 1 ,0 ,0);
+    cur_VM[2] = vec4(0, 0 ,1 ,0);
+    cur_VM[3] = vec4(0, 0 ,0 ,1);
+     // HW3: You will update this current modelview during the depth first search.  Initially, we are at the "world" node, whose modelview matrix is just camera's view matrix.
     
     // HW3: The following is the beginning of the depth-first search algorithm.
     // HW3: The depth-first search for the node traversal has already been implemented (cur, dfs_stack).
@@ -65,7 +69,8 @@ void RTScene::buildTriangleSoup(void){
             Model* model = cur->models[i];
             mat4 mTransform = cur->modeltransforms[i];
 
-            shader -> modelview = cur_VM * mTransform; // TODO: HW3: Without updating cur_VM, modelview would just be camera's view matrix.
+            shader -> modelview = cur_VM * mTransform; 
+            mat4 trs =  cur_VM * mTransform;
             shader -> material  = ( cur -> models[i] ) -> material;
             
             shader -> setUniforms();
@@ -76,9 +81,9 @@ void RTScene::buildTriangleSoup(void){
             std::cout << triangles.size() << " size of triangles\n";
 
             mat3 A;
-            A[0] = vec3(cur_VM[0][0], cur_VM[0][1], cur_VM[0][2]);
-            A[1] = vec3(cur_VM[1][0], cur_VM[1][1], cur_VM[1][2]);
-            A[2] = vec3(cur_VM[2][0], cur_VM[2][1], cur_VM[2][2]);
+            A[0] = vec3(trs[0][0], trs[0][1], trs[0][2]);
+            A[1] = vec3(trs[1][0], trs[1][1], trs[1][2]);
+            A[2] = vec3(trs[2][0], trs[2][1], trs[2][2]);
 
             for (Triangle t : triangles) {
                 // problem is between here
@@ -89,10 +94,9 @@ void RTScene::buildTriangleSoup(void){
                 glm::vec4 p0 = glm::vec4(p00, 1);
                 glm::vec4 p1 = glm::vec4(p11, 1);
                 glm::vec4 p2 = glm::vec4(p22, 1);
-                t.P[0] = p0 * mTransform;
-                t.P[1] = p1 * mTransform;
-                t.P[2] = p2 * mTransform;
-
+                t.P[0] = glm::vec3((trs * p0))/((trs * p0).w);
+                t.P[1] = glm::vec3((trs * p1))/((trs * p1).w);
+                t.P[2] = glm::vec3((trs * p2))/((trs * p2).w);
                 t.N[0] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[0]);
                 t.N[1] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[1]);
                 t.N[2] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[2]);
