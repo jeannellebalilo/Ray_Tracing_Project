@@ -28,10 +28,10 @@ void RayTracer::Raytrace(Camera cam, RTScene &scene, Image &image){
     int h = image.height;
     for (int j=0; j<h; j++){
      for (int i=0; i<w; i++){
-         std::cout<<"Traycing j: " << j << " i: " << i;
+         //std::cout<<"Traycing j: " << j << " i: " << i<< endl;
          Ray ray = RayThruPixel( cam, i, j, w, h );
          Intersection hit = Intersect( ray, scene );
-         std::cout<<" hit value t: " << hit.dist << std::endl<< std::endl<< std::endl;
+         //std::cout<<" hit value t: " << hit.dist << std::endl<< std::endl<< std::endl;
          image.pixels[j*w + i] = FindColor( hit, scene, 4 ); // <- not sure how far recursion depth should be yet
         }
      }
@@ -52,14 +52,14 @@ Ray RayTracer::RayThruPixel(Camera cam, int i, int j, int width, int height){
     return ray;
 }
 
-Intersection RayTracer::Intersect(Ray ray, Triangle triangle){
+Intersection RayTracer::Intersect(Ray ray, Triangle* triangle){
     
-    glm::vec4 p0 = glm::vec4(triangle.P[0], 1.0f);
-    glm::vec4 p1 = glm::vec4(triangle.P[1], 1.0f);
-    glm::vec4 p2 = glm::vec4(triangle.P[2], 1.0f);
-    glm::vec3 n0 = glm::vec3(triangle.N[0]);
-    glm::vec3 n1 = glm::vec3(triangle.N[1]);
-    glm::vec3 n2 = glm::vec3(triangle.N[2]);
+    glm::vec4 p0 = glm::vec4(triangle->P[0], 1.0f);
+    glm::vec4 p1 = glm::vec4(triangle->P[1], 1.0f);
+    glm::vec4 p2 = glm::vec4(triangle->P[2], 1.0f);
+    glm::vec3 n0 = glm::vec3(triangle->N[0]);
+    glm::vec3 n1 = glm::vec3(triangle->N[1]);
+    glm::vec3 n2 = glm::vec3(triangle->N[2]);
     glm::vec4 d = glm::vec4(-ray.dir, 0.0f);
     glm::mat4 mat = glm::mat4(p0,p1,p2,d);
     glm::vec4 p = glm::vec4(ray.p0, 1.0f);
@@ -67,10 +67,10 @@ Intersection RayTracer::Intersect(Ray ray, Triangle triangle){
     float t = lamba.w;
     glm::vec3 iPoint = lamba.x * p0 + lamba.y * p1 + lamba.z * p2;
     glm::vec3 n = glm::normalize(lamba.x * n0 + lamba.y * n1 + lamba.z * n2);
-    Intersection i0 = Intersection(iPoint, n, ray.dir, &triangle, INFINITY);
+    Intersection i0 = Intersection(iPoint, n, ray.dir, triangle, INFINITY);
    
     if(lamba.x > 0 && lamba.y > 0 && lamba.z > 0 && t>0){
-        Intersection inter = Intersection(iPoint, n, ray.dir, &triangle, t);
+        Intersection inter = Intersection(iPoint, n, ray.dir, triangle, t);
         std::cout<< std::endl<<"Found hit:"<< t << std::endl;   
         return inter;
     }
@@ -86,8 +86,8 @@ Intersection RayTracer::Intersect(Ray ray, RTScene &scene){
     float mindist = INFINITY;
     Intersection hit;
     hit.dist = INFINITY;
-    for (Triangle t : scene.triangle_soup){ // Find closest intersection; test all objects
-        Intersection hit_temp = Intersect(ray, t);
+    for (int i=0; i<scene.triangle_soup.size(); i++){ // Find closest intersection; test all objects
+        Intersection hit_temp = Intersect(ray, &scene.triangle_soup[i]);
         if (hit_temp.dist < mindist){ // closer than previous hit
             mindist = hit_temp.dist;
             hit = hit_temp;
@@ -99,39 +99,40 @@ Intersection RayTracer::Intersect(Ray ray, RTScene &scene){
 
 // Shade the light color seen by the in-coming ray
 glm::vec3 RayTracer::FindColor(Intersection hit, RTScene &scene, int recursion_depth){
-    /* 
-        Intersection variables:
-        P = position of intersection
-        N = surface normal
-        V = direction to incoming ray
-        triangle
-        d = distance to source of ray
-    */
-   //std::cout << "Drawing, Distance: " << hit.dist << std::endl;
-    Material* m = hit.triangle->material;
-    glm::vec3 fragColor = m->emision;
-      if(hit.dist>=INFINITY){
-        return glm::vec3(1.0f, 1.0f, 1.0f);
+    
+    //Material *m = hit.triangle->material;
+    if(hit.dist>=INFINITY){
+        return glm::vec3(0.0f, 0.0f, 0.0f);
     }
+    if(hit.triangle->material == NULL){
+        return glm::vec3(0.0f, 0.0f, 0.0f);
+    }
+    glm::vec3 fragColor = hit.triangle->material->emision;
+    std::cout << "Starting For" << std::endl;
     for(auto const& [key, light] : scene.light){
-        if(recursion_depth>0){
+        if(recursion_depth!=0){
             Ray reflectedRay = Ray();
-            reflectedRay.dir = ((2 * (glm::dot(hit.N,hit.V) ) * hit.N - hit.V));
+            //std::cout << hit.N.x << " .  " << hit.P.x << std::endl;
+            reflectedRay.dir = (2 * (glm::dot(hit.N,hit.V) ) * hit.N - hit.V);
             reflectedRay.p0 = hit.P;
             Intersection rHit = Intersect(reflectedRay, scene);
             fragColor+= FindColor(rHit, scene, recursion_depth - 1);
         }
+        else{
+            
+        }
         Ray ray = Ray();
-        ray.p0 = hit.P;
+        ray.p0 = hit.P+0.1f*(hit.N);
         glm::vec3 dir = (hit.P - glm::vec3(light->position)/light->position.w);
         ray.dir = dir;
         Intersection intr = Intersect(ray, scene);
-        if(intr.dist >= INFINITY){
-            fragColor += glm::vec3(m->ambient)/m->ambient.w;
-            fragColor += glm::vec3(m->diffuse)/m->diffuse.w;
+        if(intr.dist < INFINITY){
+            fragColor += glm::vec3(hit.triangle->material->ambient)/hit.triangle->material->ambient.w;
+            fragColor += glm::vec3(hit.triangle->material->diffuse)/hit.triangle->material->diffuse.w;
         }
         else{
-             return glm::vec3(1.0f, 1.0f, 1.0f);
+             std::cout << "Returing white" << std::endl;
+             return glm::vec3(0.0f, 0.0f, 0.0f);
         }
     }
 

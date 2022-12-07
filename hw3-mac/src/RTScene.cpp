@@ -85,23 +85,25 @@ void RTScene::buildTriangleSoup(void){
             A[1] = vec3(trs[1][0], trs[1][1], trs[1][2]);
             A[2] = vec3(trs[2][0], trs[2][1], trs[2][2]);
 
-            for (Triangle t : triangles) {
+            for (int i = 0; i<triangles.size(); i++) {
                 // problem is between here
-                glm::vec3 p00 = t.P[0];
-                glm::vec3 p11 = t.P[1];
-                glm::vec3 p22 = t.P[2];
+                glm::vec3 p00 = triangles[i].P[0];
+                glm::vec3 p11 = triangles[i].P[1];
+                glm::vec3 p22 = triangles[i].P[2];
                 // and here
                 glm::vec4 p0 = glm::vec4(p00, 1);
                 glm::vec4 p1 = glm::vec4(p11, 1);
                 glm::vec4 p2 = glm::vec4(p22, 1);
-                t.P[0] = glm::vec3((trs * p0))/((trs * p0).w);
-                t.P[1] = glm::vec3((trs * p1))/((trs * p1).w);
-                t.P[2] = glm::vec3((trs * p2))/((trs * p2).w);
-                t.N[0] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[0]);
-                t.N[1] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[1]);
-                t.N[2] = glm::normalize(glm::inverse(glm::transpose(A)) * t.N[2]);
+                triangles[i].P[0] = glm::vec3((trs * p0))/((trs * p0).w);
+                triangles[i].P[1] = glm::vec3((trs * p1))/((trs * p1).w);
+                triangles[i].P[2] = glm::vec3((trs * p2))/((trs * p2).w);
+                triangles[i].N[0] = glm::normalize(glm::inverse(glm::transpose(A)) * triangles[i].N[0]);
+                triangles[i].N[1] = glm::normalize(glm::inverse(glm::transpose(A)) * triangles[i].N[1]);
+                triangles[i].N[2] = glm::normalize(glm::inverse(glm::transpose(A)) * triangles[i].N[2]);
+                triangles[i].material = model -> material;
+                
 
-                triangle_soup.push_back(t);
+                triangle_soup.push_back(triangles[i]);
             }
 
             std::cout << triangle_soup.size() << " triangles in triangle_soup\n";
