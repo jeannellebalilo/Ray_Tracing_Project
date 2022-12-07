@@ -21,8 +21,8 @@
 
 
 
-static const int width = 800;
-static const int height = 600;
+static const int width = 400;
+static const int height = 300;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static RTScene scene;
@@ -113,10 +113,12 @@ void keyboard(unsigned char key, int x, int y){
             break;
         case 'a':
             scene.camera -> zoom(0.9f);
+            display();
             glutPostRedisplay();
             break;
         case 'z':
             scene.camera -> zoom(1.1f);
+            display();
             glutPostRedisplay();
             break;
         case 'l':
@@ -141,18 +143,22 @@ void specialKey(int key, int x, int y){
     switch (key) {
         case GLUT_KEY_UP: // up
             scene.camera -> rotateUp(-10.0f);
+            display();
             glutPostRedisplay();
             break;
         case GLUT_KEY_DOWN: // down
             scene.camera -> rotateUp(10.0f);
+            display();
             glutPostRedisplay();
             break;
         case GLUT_KEY_RIGHT: // right
             scene.camera -> rotateRight(-10.0f);
+            display();
             glutPostRedisplay();
             break;
         case GLUT_KEY_LEFT: // left
             scene.camera -> rotateRight(10.0f);
+            display();
             glutPostRedisplay();
             break;
     }

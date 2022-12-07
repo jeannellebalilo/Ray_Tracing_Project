@@ -8,7 +8,13 @@ public:
     Triangle* triangle; // pointer to geometric primitive (and material info)
     float dist; // distance to the source of ray
 
-    Intersection(){}
+    Intersection(){
+        P = glm::vec3();
+        N = glm::vec3();
+        V = glm::vec3();
+        triangle = nullptr;
+        dist = INFINITY;
+    }
 
     Intersection(glm::vec3 pos, glm::vec3 norm, glm::vec3 rayDir, Triangle* t, float d) {
         P = pos;
