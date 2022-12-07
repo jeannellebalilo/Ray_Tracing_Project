@@ -20,12 +20,14 @@ that loads an obj file.
 #include "Material.h"
 #include "Triangle.h"
 #include "RayTracer.h"
+#include <time.h>
 
 using namespace RayTracer;
 
 void RayTracer::Raytrace(Camera cam, RTScene &scene, Image &image){
     int w = image.width;
     int h = image.height;
+    clock_t start = clock();
     for (int j=0; j<h; j++){
      for (int i=0; i<w; i++){
          Ray ray = RayThruPixel( cam, i, j, w, h );
@@ -34,7 +36,9 @@ void RayTracer::Raytrace(Camera cam, RTScene &scene, Image &image){
         }
         std::cout<<"Traycing compleetion:" << float(float((j))/float((h))) * 100.0f<< "%"  << std::endl;
      }
-     std::cout<< "Render Finished" << std::endl;
+    clock_t end = clock();
+    double elapsed = double(end - start)/CLOCKS_PER_SEC;
+    std::cout<< "Render Finished. time taken: "<< elapsed << " seconds" << std::endl;
 }
 
 Ray RayTracer::RayThruPixel(Camera cam, int i, int j, int width, int height){
