@@ -17,12 +17,16 @@
 #include "Image.h"
 #include "RayTracer.h"
 
+#include "Scene.h"
 
-static const int width = 400;
-static const int height = 300;
+
+
+static const int width = 800;
+static const int height = 600;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static RTScene scene;
+static Scene nScene;
 static Image image(width, height);
 bool RT_mode = false;
 
@@ -52,6 +56,7 @@ void initialize(void){
     
     // Initialize scene
     scene.init();
+    nScene.init();
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);
@@ -65,8 +70,11 @@ void display(void){
     if(RT_mode == true){
         scene.buildTriangleSoup();
         RayTracer::Raytrace(*scene.camera, scene, image);
+        image.draw();
     }
-    image.draw();
+    else{
+        nScene.draw();
+    }
     
     glutSwapBuffers();
     //glFlush();
@@ -122,8 +130,7 @@ void keyboard(unsigned char key, int x, int y){
         case 'i':
             RT_mode = !RT_mode;
             display();
-            
-            //glutPostRedisplay();
+            glutPostRedisplay();
             break;
         default:
             glutPostRedisplay();

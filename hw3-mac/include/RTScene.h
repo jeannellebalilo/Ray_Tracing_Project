@@ -24,9 +24,9 @@
 #ifndef __RTSCENE_H__
 #define __RTSCENE_H__
 
-class Node {
+class RTNode {
 public:
-    std::vector< Node* > childnodes;
+    std::vector< RTNode* > childnodes;
     std::vector< glm::mat4 > childtransforms;
     std::vector< Model* > models;
     std::vector< glm::mat4 > modeltransforms;
@@ -45,11 +45,11 @@ public:
     std::vector<Triangle> triangle_soup;
     
     // The container of nodes will be the scene graph after we connect the nodes by setting the child_nodes.
-    std::map< std::string, Node* > node;
+    std::map< std::string, RTNode* > node;
     
     RTScene(){
         // the default scene graph already has one node named "world."
-        node["world"] = new Node;
+        node["world"] = new RTNode;
     }
     
     void init( void );
@@ -77,7 +77,7 @@ public:
             delete entry.second;
         }
         // model
-        for(std::pair<std::string,Node*> entry : node ){
+        for(std::pair<std::string,RTNode*> entry : node ){
             delete entry.second;
         }
         delete camera;

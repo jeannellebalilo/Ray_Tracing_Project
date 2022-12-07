@@ -26,10 +26,10 @@ void RTScene::buildTriangleSoup(void){
     }
     
     // Define stacks for depth-first search (DFS)
-    std::stack < Node* > dfs_stack;
+    std::stack < RTNode* > dfs_stack;
     std::stack < mat4 >  matrix_stack; // HW3: You will update this matrix_stack during the depth-first search while loop.
     // Initialize the current state variable for DFS
-    Node* cur = node["world"]; // root of the tree
+    RTNode* cur = node["world"]; // root of the tree
     mat4 cur_VM = glm::mat4();
     cur_VM[0] = vec4(1, 0 ,0 ,0);
     cur_VM[1] = vec4(0, 1 ,0 ,0);
