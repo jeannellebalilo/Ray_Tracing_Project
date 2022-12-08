@@ -21,6 +21,7 @@
 
 
 
+
 static const int width = 800;
 static const int height = 600;
 static const char* title = "Scene viewer";
