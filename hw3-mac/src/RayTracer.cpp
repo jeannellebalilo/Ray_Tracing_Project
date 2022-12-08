@@ -32,7 +32,7 @@ void RayTracer::Raytrace(Camera cam, RTScene &scene, Image &image){
      for (int i=0; i<w; i++){
          Ray ray = RayThruPixel( cam, i, j, w, h );
          Intersection hit = Intersect( ray, scene );
-         image.pixels[j*w + i] = FindColor( hit, scene, 4); 
+         image.pixels[j*w + (w-i)] = FindColor( hit, scene, 2); 
         }
         std::cout<<"Traycing compleetion:" << float(float((j))/float((h))) * 100.0f<< "%"  << std::endl;
      }
@@ -107,20 +107,26 @@ glm::vec3 RayTracer::FindColor(Intersection hit, RTScene &scene, int recursion_d
     if(hit.triangle==nullptr || hit.dist == INFINITY ){
         return glm::vec3(0.0f, 0.0f, 0.0f);
     }
+    
     glm::vec3 fragColor = hit.triangle->material->emision;
-    for(auto const& [key, light] : scene.light){
-        if(recursion_depth>0){
+
+    if(recursion_depth>0){
             Ray reflectedRay = Ray();
-            glm::vec3 dir = 2.0f * glm::dot(hit.N, hit.V) * hit.N - hit.V;
+            glm::vec3 v = glm::normalize(hit.V);
+            glm::vec3 n = glm::normalize(hit.N);
+            glm::vec3 dir = glm::normalize(2.0f * glm::dot(n, v) * n) - v;
             reflectedRay.dir = dir;
-            reflectedRay.p0 = hit.P;
+            reflectedRay.p0 = hit.P + 0.01f * hit.N;
             Intersection rHit = Intersect(reflectedRay, scene);
             if(rHit.triangle == nullptr || rHit.dist == INFINITY){
                   return FindColor(hit, scene, 0);
             }else{
                 fragColor += glm::vec3(hit.triangle->material->specular) * FindColor(rHit, scene, recursion_depth - 1);
             }
-        }
+    }
+
+    for(auto const& [key, light] : scene.light){
+        
         Ray ray = Ray();
         ray.p0 = hit.P + 0.2f * hit.N;
         glm::vec3 dir = (glm::vec3(light->position) - ray.p0 );
