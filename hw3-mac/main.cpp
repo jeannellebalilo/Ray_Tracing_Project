@@ -21,8 +21,8 @@
 
 
 
-static const int width = 30;
-static const int height = 40;
+static const int width = 800;
+static const int height = 600;
 static const char* title = "Scene viewer";
 static const glm::vec4 background(0.1f, 0.2f, 0.3f, 1.0f);
 static RTScene scene;
